@@ -1,6 +1,3 @@
-var axios = require('axios');
-var qs = require('qs');
-var FormData = require('form-data');
 var xlsx = require('node-xlsx');
 
 var request = require('request');
@@ -18,10 +15,6 @@ const ReadExcel = async () => {
   var obj = xlsx.parse(__dirname + '/apontamento.xlsx'); // parses a file
 
   var objApontamentos = obj[0].data;
-
-  //console.log(objApontamentos);
-
-  //var obj = xlsx.parse(fs.readFileSync(__dirname + '/apontamento.xls')); // parses a buffer
 
   var apontamentos = [];
   for(var i=0; i < objApontamentos.length; i++){
@@ -134,18 +127,6 @@ const KimaiAppoint = (idproj, activity, startTime, endTime, day) => {
     });
   });
 }
-
-/*const parseCookies = (request) => {
-  var list = {},
-      rc = request.headers.cookie;
-
-  rc && rc.split(';').forEach(function( cookie ) {
-      var parts = cookie.split('=');
-      list[parts.shift().trim()] = decodeURI(parts.join('='));
-  });
-
-  return list;
-}*/
 
 KimaiLogin();
 
