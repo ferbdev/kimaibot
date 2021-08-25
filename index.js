@@ -11,18 +11,32 @@ const ActivityIDAlmoco = 10;
 
 let kimayKey;
 
+let user = '';
+let password = '';
+
 const ReadExcel = async () => {
   var obj = xlsx.parse(__dirname + '/apontamento.xlsx'); // parses a file
 
   var objApontamentos = obj[0].data;
 
+  user = objApontamentos[1][1];
+  password = objApontamentos[2][1];
+
+  console.log('Fazendo login...');
+  console.log(user, password);
+
+  let login = KimaiLogin();
+  let response_login = await login;
+
+  console.log(response_login);
+
   var apontamentos = [];
-  for(var i=0; i < objApontamentos.length; i++){
+  for(var i=5; i < objApontamentos.length; i++){
     if(objApontamentos[i].length > 1) 
       apontamentos.push(objApontamentos[i]);
   }
 
-  console.log(apontamentos);
+  //console.log(apontamentos);
   
   for(var i=0; i < apontamentos.length; i++){
     var day = apontamentos[i][0].replace('/', '.').replace('/', '.');
@@ -56,29 +70,25 @@ const ReadExcel = async () => {
 }
 
 const KimaiLogin = async () => {
+  return new Promise(async (resolve, reject) => {
+    var options = {
+      'method': 'POST',
+      'url': 'https://timetracking.knapp.com.br/index.php?a=checklogin',
+      'headers': {
+        'Cookie': 'kimai_key=iH7M0VTyLSzIWeuherk1VtfGGGPFM2; kimai_user=lucas.bueno'
+      },
+      formData: {
+        'name': user,
+        'password': password
+        }
+    };
+    await request(options, async function (error, response) {
+      if (error) console.log('exception:' + error);
 
-  console.log('Fazendo login...');
-
-  var options = {
-    'method': 'POST',
-    'url': 'https://timetracking.knapp.com.br/index.php?a=checklogin',
-    'headers': {
-      'Cookie': 'kimai_key=iH7M0VTyLSzIWeuherk1VtfGGGPFM2; kimai_user=lucas.bueno'
-    },
-    formData: {
-      'name': 'lucas.bueno',
-      'password': '1l2u3c4a5s'
-      }
-  };
-  await request(options, async function (error, response) {
-    if (error) console.log('exception:' + error);
-
-    kimayKey = response.rawHeaders.filter(name => name.includes('kimai_key='));
-
-    console.log('Logado!');
-
-    await ReadExcel();
-  });
+      kimayKey = response.rawHeaders.filter(name => name.includes('kimai_key='));
+      resolve('Logado!');
+    });
+  })
 }
 
 const KimaiAppoint = (idproj, activity, startTime, endTime, day) => {
@@ -128,7 +138,7 @@ const KimaiAppoint = (idproj, activity, startTime, endTime, day) => {
   });
 }
 
-KimaiLogin();
+ReadExcel();
 
 /*setInterval(async ()=>{
     
