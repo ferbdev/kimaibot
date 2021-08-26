@@ -28,7 +28,7 @@ const ReadExcel = async () => {
   let login = KimaiLogin();
   let response_login = await login;
 
-  console.log(response_login);
+  console.log(response_login, kimayKey);
 
   var apontamentos = [];
   for(var i=5; i < objApontamentos.length; i++){
