@@ -3,10 +3,10 @@ var xlsx = require('node-xlsx');
 var request = require('request');
 
 
-const IdProjetoMultiB = 1022;
-const IdProjetoAlmoco = 1041;
+let IdProjeto = 1022;
+let ActivityID = 39;
 
-const ActivityIDMultiB = 39;
+const IdProjetoAlmoco = 1041;
 const ActivityIDAlmoco = 10;
 
 let kimayKey;
@@ -40,31 +40,32 @@ const ReadExcel = async () => {
   
   var apontamentos = [];
   for(var i=5; i < objApontamentos.length; i++){
-    if(objApontamentos[i].length > 1) 
+    if(objApontamentos[i].length > 2) 
       apontamentos.push(objApontamentos[i]);
   }
 
   //console.log(apontamentos);
   
   for(var i=0; i < apontamentos.length; i++){
-    var day = apontamentos[i][0].replace('/', '.').replace('/', '.');
+    var day = apontamentos[i][1].replace('/', '.').replace('/', '.');
+    IdProjeto = apontamentos[i][0];
     
-    for(var j=1; j < apontamentos[i].length - 1; j++){
+    for(var j=2; j < apontamentos[i].length - 1; j++){
       
       var entrada = apontamentos[i][j];
       var saida = apontamentos[i][j + 1];
 
-      var isAlmoco = (j == 2);
+      var isAlmoco = (j == 3);
 
-      var total = j / 2;
-      var ignore = total % 2 == 0 ? true : false;
+      var total = j / 3;
+      var ignore = total % 3 == 0 ? true : false;
 
       if(ignore && !isAlmoco){
         continue;
       }
 
-      idProj = isAlmoco ? IdProjetoAlmoco : IdProjetoMultiB;
-      idActv = isAlmoco ? ActivityIDAlmoco : ActivityIDMultiB;
+      idProj = isAlmoco ? IdProjetoAlmoco : IdProjeto;
+      idActv = isAlmoco ? ActivityIDAlmoco : ActivityID;
 
       let appointment = KimaiAppoint(idProj, idActv, entrada, saida, day);
       let response_body = await appointment;
