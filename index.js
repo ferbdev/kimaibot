@@ -15,6 +15,10 @@ let user = '';
 let password = '';
 let userID = '';
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const ReadExcel = async () => {
   var obj = xlsx.parse(__dirname + '/apontamento.xlsx'); // parses a file
 
@@ -67,12 +71,22 @@ const ReadExcel = async () => {
       idProj = isAlmoco ? IdProjetoAlmoco : IdProjeto;
       idActv = isAlmoco ? ActivityIDAlmoco : ActivityID;
 
-      let appointment = KimaiAppoint(idProj, idActv, entrada, saida, day);
-      let response_body = await appointment;
+      var success = false;
+      while(!success){
+        let appointment = KimaiAppoint(idProj, idActv, entrada, saida, day);
+        let response_body = await appointment;
 
-      console.log(`Apontou proj ${idProj} act ${idActv} || ${day} das ${entrada} as ${saida} ||`, response_body)
+        console.log(`Apontou proj ${idProj} act ${idActv} || ${day} das ${entrada} as ${saida} ||`, response_body)
+
+        if(response_body.includes('"errors":[]')){
+          success = true;
+        }
+        else
+        {
+          await sleep(10000);
+        }
+      }
     }
-    
   }
 }
 
