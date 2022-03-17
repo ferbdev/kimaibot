@@ -104,7 +104,7 @@ async function StartBot(browser) {
 
             var index1 = userData.indexOf("description") - 9;
 
-            userFullName = userData.substring(index0, index1).replace('+', ' ');
+            userFullName = userData.substring(index0, index1).replaceAll('+', ' ');
 
             console.log("name", userFullName);
         }
